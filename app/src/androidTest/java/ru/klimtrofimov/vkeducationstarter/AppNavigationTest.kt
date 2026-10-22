@@ -5,6 +5,8 @@ import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.onAllNodesWithText
+import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
@@ -25,7 +27,7 @@ class AppNavigationTest {
     @Test
     fun listOpensSelectedCardAndBackReturnsToList() {
         composeRule.onNodeWithText("Заметки").performClick()
-        composeRule.onNodeWithText("Заметки").assertIsDisplayed()
+        composeRule.onAllNodesWithText("Заметки").onFirst().assertIsDisplayed()
         composeRule.onNodeWithText("Установить").assertIsDisplayed()
         composeRule.onNodeWithContentDescription("Назад").performClick()
         composeRule.onNodeWithText("Приложения").assertIsDisplayed()
@@ -44,10 +46,14 @@ class AppNavigationTest {
         composeRule.onNodeWithTag("showcase_pager").performTouchInput { swipeLeft() }
         composeRule.waitForIdle()
         assertShowcasePage(3)
+        composeRule.onNodeWithTag("showcase_pager").performTouchInput { swipeLeft() }
+        composeRule.waitForIdle()
+        assertShowcasePage(3)
         composeRule.onNodeWithText("Фото", substring = false).assertIsDisplayed()
         composeRule.onNodeWithText("Фото", substring = false).performClick()
         composeRule.onNodeWithText("Приложения").assertIsDisplayed()
     }
+
     private fun assertShowcasePage(page: Int) {
         composeRule.onNodeWithTag("showcase_pager").assert(
             SemanticsMatcher.expectValue(
