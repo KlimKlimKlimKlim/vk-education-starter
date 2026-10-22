@@ -15,4 +15,27 @@ object SampleApps {
         AppInfo("tasks", "Задачи", "Планы, списки дел и напоминания", "Производительность", R.drawable.ic_app_tasks),
         AppInfo("games", "Игры", "Небольшие игры для перерыва", "Игры", R.drawable.ic_app_games),
     )
+    val showcasePages: List<List<AppInfo>> = apps.chunked(3)
+
+    fun details(id: String): AppDetails {
+        val app = apps.first { it.id == id }
+        return AppDetails(
+            id = app.id,
+            name = app.name,
+            developer = "Учебная студия",
+            category = app.category,
+            ageRating = 0,
+            size = 24f,
+            iconRes = app.iconRes,
+            screenshotResList = listOf(
+                R.drawable.demo_screenshot_1,
+                R.drawable.demo_screenshot_2,
+                R.drawable.demo_screenshot_3,
+            ),
+            description = "${app.description}. " +
+                "Это демонстрационная карточка учебного приложения. " +
+                "Все данные, иконки и изображения сохранены в проекте, " +
+                "поэтому для просмотра не требуется подключение к интернету.",
+        )
+    }
 }
