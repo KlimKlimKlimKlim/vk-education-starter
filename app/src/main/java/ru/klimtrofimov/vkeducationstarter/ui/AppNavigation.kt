@@ -8,14 +8,14 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import ru.klimtrofimov.vkeducationstarter.data.SampleApps
 import ru.klimtrofimov.vkeducationstarter.ui.appdetails.AppDetailsScreen
-import ru.klimtrofimov.vkeducationstarter.ui.apps.AppListScreen
+import ru.klimtrofimov.vkeducationstarter.ui.apps.AppListRoute
 
 @Composable
 fun AppNavigation() {
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = "apps") {
         composable("apps") {
-            AppListScreen(onAppClick = { app ->
+            AppListRoute(onAppClick = { app ->
                 navController.navigate("app/${app.id}") { launchSingleTop = true }
             })
         }

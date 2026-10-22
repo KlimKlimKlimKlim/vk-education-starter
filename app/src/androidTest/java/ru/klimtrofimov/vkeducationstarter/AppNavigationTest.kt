@@ -54,6 +54,16 @@ class AppNavigationTest {
         composeRule.onNodeWithText("Приложения").assertIsDisplayed()
     }
 
+    @Test
+    fun contentSurvivesRecreationAndSnackbarIsNotRepeated() {
+        composeRule.onNodeWithTag("app_list_toolbar").performClick()
+        composeRule.onNodeWithText("Это список приложений").assertIsDisplayed()
+        composeRule.activityRule.scenario.recreate()
+        composeRule.onNodeWithTag("app_list").assertIsDisplayed()
+        composeRule.onNodeWithText("Фокус").assertIsDisplayed()
+        composeRule.onNodeWithText("Это список приложений").assertDoesNotExist()
+    }
+
     private fun assertShowcasePage(page: Int) {
         composeRule.onNodeWithTag("showcase_pager").assert(
             SemanticsMatcher.expectValue(
