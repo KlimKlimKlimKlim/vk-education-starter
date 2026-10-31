@@ -1,4 +1,4 @@
-package ru.klimtrofimov.vkeducationstarter.ui.theme
+package ru.klimtrofimov.vkeducationstarter.presentation.theme
 
 import android.app.Activity
 import android.os.Build
