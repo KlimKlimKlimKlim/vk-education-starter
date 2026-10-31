@@ -4,8 +4,9 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import ru.klimtrofimov.vkeducationstarter.ui.AppNavigation
-import ru.klimtrofimov.vkeducationstarter.ui.theme.VkEducationStarterTheme
+import ru.klimtrofimov.vkeducationstarter.di.AppContainer
+import ru.klimtrofimov.vkeducationstarter.presentation.AppNavigation
+import ru.klimtrofimov.vkeducationstarter.presentation.theme.VkEducationStarterTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -13,7 +14,10 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             VkEducationStarterTheme {
-                AppNavigation()
+                AppNavigation(
+                    appListViewModelFactory = AppContainer.appListViewModelFactory,
+                    appDetailsViewModelFactory = AppContainer::appDetailsViewModelFactory,
+                )
             }
         }
     }
