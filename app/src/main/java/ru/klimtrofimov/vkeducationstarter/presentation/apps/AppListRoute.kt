@@ -6,12 +6,11 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.res.stringResource
-import androidx.lifecycle.ViewModelProvider
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.flow.collectLatest
 import ru.klimtrofimov.vkeducationstarter.R
 import ru.klimtrofimov.vkeducationstarter.domain.model.AppInfo
@@ -19,8 +18,7 @@ import ru.klimtrofimov.vkeducationstarter.domain.model.AppInfo
 @Composable
 fun AppListRoute(
     onAppClick: (AppInfo) -> Unit,
-    viewModelFactory: ViewModelProvider.Factory,
-    viewModel: AppListViewModel = viewModel(factory = viewModelFactory),
+    viewModel: AppListViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     // Snackbar не сохраняется через rememberSaveable: после поворота он не повторяется.

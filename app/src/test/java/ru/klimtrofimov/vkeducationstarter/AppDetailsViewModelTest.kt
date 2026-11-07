@@ -1,5 +1,6 @@
 package ru.klimtrofimov.vkeducationstarter
 
+import androidx.lifecycle.SavedStateHandle
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertSame
 import org.junit.Test
@@ -26,7 +27,7 @@ class AppDetailsViewModelTest {
                 return details
             }
         }
-        val viewModel = AppDetailsViewModel("test", repository)
+        val viewModel = AppDetailsViewModel(SavedStateHandle(mapOf("appId" to "test")), repository)
         assertSame(details, viewModel.uiState.value.app)
         assertEquals(listOf(app), viewModel.uiState.value.showcaseApps)
         assertEquals(1, listCalls)

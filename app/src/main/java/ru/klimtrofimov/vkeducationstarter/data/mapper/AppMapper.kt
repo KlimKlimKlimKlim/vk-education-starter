@@ -1,10 +1,11 @@
 package ru.klimtrofimov.vkeducationstarter.data.mapper
 
+import javax.inject.Inject
 import ru.klimtrofimov.vkeducationstarter.data.dto.AppDto
 import ru.klimtrofimov.vkeducationstarter.domain.model.AppDetails
 import ru.klimtrofimov.vkeducationstarter.domain.model.AppInfo
 
-class AppMapper {
+class AppMapper @Inject constructor() {
     fun toAppInfo(dto: AppDto): AppInfo = AppInfo(
         id = dto.id,
         name = dto.title,

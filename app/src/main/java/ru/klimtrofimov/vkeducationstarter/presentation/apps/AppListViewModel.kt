@@ -1,6 +1,8 @@
 package ru.klimtrofimov.vkeducationstarter.presentation.apps
 
 import androidx.lifecycle.ViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,7 +17,8 @@ sealed interface AppListEffect {
     data object ShowToolbarSnackbar : AppListEffect
 }
 
-class AppListViewModel(
+@HiltViewModel
+class AppListViewModel @Inject constructor(
     repository: AppsRepository,
 ) : ViewModel() {
     // Чтение данных один раз на экземпляр ViewModel, не при каждой подписке UI.

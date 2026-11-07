@@ -1,9 +1,10 @@
 package ru.klimtrofimov.vkeducationstarter.data.source
 
+import javax.inject.Inject
 import ru.klimtrofimov.vkeducationstarter.data.dto.AppDto
 
 // Вымышленные приложения: все захардкоженные данные находятся только в data.
-class LocalAppsDataSource : AppsDataSource {
+class LocalAppsDataSource @Inject constructor() : AppsDataSource {
     override fun getApps(): List<AppDto> = apps
 
     private val apps = listOf(

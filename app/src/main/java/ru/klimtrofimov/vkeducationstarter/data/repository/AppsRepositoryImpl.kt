@@ -1,12 +1,13 @@
 package ru.klimtrofimov.vkeducationstarter.data.repository
 
+import javax.inject.Inject
 import ru.klimtrofimov.vkeducationstarter.data.mapper.AppMapper
 import ru.klimtrofimov.vkeducationstarter.data.source.AppsDataSource
 import ru.klimtrofimov.vkeducationstarter.domain.model.AppDetails
 import ru.klimtrofimov.vkeducationstarter.domain.model.AppInfo
 import ru.klimtrofimov.vkeducationstarter.domain.repository.AppsRepository
 
-class AppsRepositoryImpl(
+class AppsRepositoryImpl @Inject constructor(
     private val source: AppsDataSource,
     private val mapper: AppMapper,
 ) : AppsRepository {
