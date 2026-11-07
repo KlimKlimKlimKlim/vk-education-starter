@@ -1,48 +1,91 @@
 package ru.klimtrofimov.vkeducationstarter
 
+import java.io.IOException
+import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
-import ru.klimtrofimov.vkeducationstarter.data.dto.AppDto
+import ru.klimtrofimov.vkeducationstarter.data.dto.AppDetailsDto
+import ru.klimtrofimov.vkeducationstarter.data.dto.CatalogAppDto
 import ru.klimtrofimov.vkeducationstarter.data.mapper.AppMapper
+import ru.klimtrofimov.vkeducationstarter.data.network.AppsApi
 import ru.klimtrofimov.vkeducationstarter.data.repository.AppsRepositoryImpl
-import ru.klimtrofimov.vkeducationstarter.data.source.AppsDataSource
 import ru.klimtrofimov.vkeducationstarter.data.source.LocalAppsDataSource
-import ru.klimtrofimov.vkeducationstarter.domain.repository.AppsRepository
 
 class AppsRepositoryTest {
+    private val dto = CatalogAppDto("server-id", "Server app", "From server", "Category", "https://example.org/icon.png")
+
     @Test
-    fun localDataContainsExactlyNineAppsAndMatchingDetails() {
-        val repository: AppsRepository = AppsRepositoryImpl(LocalAppsDataSource(), AppMapper())
+    fun catalogComesFromApiAndIsMappedToDomain() = runTest {
+        val api = FakeApi()
+        val repository = AppsRepositoryImpl(api, LocalAppsDataSource(), AppMapper())
         val apps = repository.getApps()
-        assertEquals(9, apps.size)
-        assertEquals(9, apps.map { it.id }.distinct().size)
-        assertEquals(listOf(3, 3, 3), apps.chunked(3).map { it.size })
-        apps.forEach { app ->
-            assertTrue(app.name.isNotBlank())
-            assertTrue(app.description.isNotBlank())
-            assertTrue(app.category.isNotBlank())
-            val details = repository.getAppDetails(app.id)
-            assertEquals(app.id, details.id)
-            assertEquals(app.name, details.name)
-            assertEquals(app.iconKey, details.iconKey)
-            assertEquals(3, details.screenshotKeys.size)
+        assertEquals(listOf("server-id"), apps.map { it.id })
+        assertEquals(dto.iconUrl, apps.single().iconUrl)
+        assertEquals(apps, repository.getCachedApps())
+        assertEquals(1, api.catalogCalls)
+        assertEquals(0, api.detailsCalls)
+    }
+
+    @Test
+    fun cardUsesLoadedCatalogWithoutCallingDetailedEndpoint() = runTest {
+        val api = FakeApi()
+        val repository = AppsRepositoryImpl(api, LocalAppsDataSource(), AppMapper())
+        repository.getApps()
+        val details = repository.getAppDetails(dto.id)
+        assertEquals(dto.id, details.id)
+        assertEquals(dto.name, details.name)
+        assertEquals(dto.description, details.description)
+        assertEquals(dto.iconUrl, details.iconUrl)
+        assertNull(details.ageRating)
+        assertNull(details.sizeMb)
+        assertTrue(details.developer.isEmpty())
+        assertEquals(1, api.catalogCalls)
+        assertEquals(0, api.detailsCalls)
+    }
+
+    @Test
+    fun remoteDetailsMethodMapsAllFieldsAndRequestedId() = runTest {
+        val api = FakeApi()
+        val repository = AppsRepositoryImpl(api, LocalAppsDataSource(), AppMapper())
+        val details = repository.getRemoteAppDetails(dto.id)
+        assertEquals(dto.id, api.requestedId)
+        assertEquals("Developer", details.developer)
+        assertEquals(12, details.ageRating)
+        assertEquals(24f, details.sizeMb!!, 0.001f)
+        assertEquals(listOf("https://example.org/screen.png"), details.screenshotUrls)
+        assertEquals(0, api.catalogCalls)
+        assertEquals(1, api.detailsCalls)
+    }
+
+    @Test
+    fun networkFailureDoesNotFallBackToHardcodedCatalog() = runTest {
+        val api = FakeApi().apply { fail = true }
+        val repository = AppsRepositoryImpl(api, LocalAppsDataSource(), AppMapper())
+        try {
+            repository.getApps()
+            throw AssertionError("Expected IOException")
+        } catch (_: IOException) {
+            assertTrue(repository.getCachedApps().isEmpty())
         }
     }
 
-    @Test
-    fun repositoryMapsInjectedDtoSourceInsteadOfUsingUiHardcode() {
-        val dto = AppDto(
-            "injected", "Injected title", "Short", "Category", "icon", "Developer",
-            6, 12f, listOf("screen"), "Full description",
-        )
-        val repository = AppsRepositoryImpl(AppsDataSource { listOf(dto) }, AppMapper())
-        assertEquals("Injected title", repository.getApps().single().name)
-        assertEquals("Full description", repository.getAppDetails("injected").description)
-    }
-
-    @Test(expected = IllegalArgumentException::class)
-    fun rejectsUnknownAppId() {
-        AppsRepositoryImpl(LocalAppsDataSource(), AppMapper()).getAppDetails("missing")
+    private inner class FakeApi : AppsApi {
+        var catalogCalls = 0
+        var detailsCalls = 0
+        var requestedId: String? = null
+        var fail = false
+        override suspend fun getCatalog(): List<CatalogAppDto> {
+            catalogCalls++
+            if (fail) throw IOException("Offline")
+            return listOf(dto)
+        }
+        override suspend fun getAppDetails(id: String): AppDetailsDto {
+            detailsCalls++
+            requestedId = id
+            return AppDetailsDto(id, dto.name, "Developer", dto.category, 12, 24f,
+                dto.iconUrl, listOf("https://example.org/screen.png"), "Full description")
+        }
     }
 }

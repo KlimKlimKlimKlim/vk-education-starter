@@ -1,0 +1,17 @@
+{
+  "id": "fa2e31b8-1234-4cf7-9914-108a170a1b01",
+  "name": "QuickNote",
+  "developer": "QuickSoft Inc.",
+  "category": "Производительность",
+  "ageRating": 3,
+  "size": 8.2,
+  "iconUrl": "https://example.org/quicknote.png",
+  "screenshotUrlList": [
+    "https://example.org/screen-1.png",
+    "https://example.org/screen-2.png",
+    "https://example.org/screen-3.png",
+    "https://example.org/screen-4.png",
+    "https://example.org/screen-5.png"
+  ],
+  "description": "Тестовое полное описание приложения"
+}

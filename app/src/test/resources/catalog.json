@@ -1,0 +1,16 @@
+[
+  {
+    "id": "fa2e31b8-1234-4cf7-9914-108a170a1b01",
+    "name": "QuickNote",
+    "description": "Тестовое описание заметок",
+    "category": "Производительность",
+    "iconUrl": "https://example.org/quicknote.png"
+  },
+  {
+    "id": "82ea6f63-2b2a-43e1-b54c-ec62e6e27229",
+    "name": "Calmalist",
+    "description": "Тестовое описание списка дел",
+    "category": "Производительность",
+    "iconUrl": "https://example.org/calmalist.png"
+  }
+]

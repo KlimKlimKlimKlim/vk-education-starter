@@ -1,33 +1,56 @@
 package ru.klimtrofimov.vkeducationstarter
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.setMain
+import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertSame
 import org.junit.Assert.assertTrue
+import org.junit.Before
 import org.junit.Test
-import ru.klimtrofimov.vkeducationstarter.domain.model.AppDetails
-import ru.klimtrofimov.vkeducationstarter.domain.model.AppInfo
-import ru.klimtrofimov.vkeducationstarter.domain.repository.AppsRepository
 import ru.klimtrofimov.vkeducationstarter.presentation.apps.AppListViewModel
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class AppListViewModelTest {
-    @Test
-    fun contentIsLoadedOnlyOnceAndKeptInState() {
-        var calls = 0
-        val expected = listOf(AppInfo("test", "Test", "Description", "Category", "test"))
-        val repository = object : AppsRepository {
-            override fun getApps(): List<AppInfo> {
-                calls += 1
-                return expected
-            }
-            override fun getAppDetails(id: String): AppDetails = error("Not used")
-        }
-        val viewModel = AppListViewModel(repository)
+    private val dispatcher = StandardTestDispatcher()
+    @Before fun setUp() = Dispatchers.setMain(dispatcher)
+    @After fun tearDown() = Dispatchers.resetMain()
 
-        assertEquals(1, calls)
-        assertSame(expected, viewModel.uiState.value.apps)
+    @Test
+    fun contentIsLoadedOnceAndRetainedWithoutReplayingSnackbar() = runTest(dispatcher) {
+        val repository = FakeAppsRepository()
+        val viewModel = AppListViewModel(repository)
+        assertTrue(viewModel.uiState.value.isLoading)
+        advanceUntilIdle()
+        assertEquals(1, repository.calls)
+        assertSame(repository.apps, viewModel.uiState.value.apps)
+        assertFalse(viewModel.uiState.value.isLoading)
         viewModel.onToolbarClick()
-        assertSame(expected, viewModel.uiState.value.apps)
-        assertEquals(1, calls)
+        assertSame(repository.apps, viewModel.uiState.value.apps)
+        assertEquals(1, repository.calls)
         assertTrue(viewModel.effects.replayCache.isEmpty())
+    }
+
+    @Test
+    fun errorIsShownAndRetryLoadsServerContent() = runTest(dispatcher) {
+        val repository = FakeAppsRepository().apply { fail = true }
+        val viewModel = AppListViewModel(repository)
+        viewModel.onRetryClick()
+        advanceUntilIdle()
+        assertTrue(viewModel.uiState.value.hasError)
+        assertTrue(viewModel.uiState.value.apps.isEmpty())
+        assertEquals(1, repository.calls)
+        repository.fail = false
+        viewModel.onRetryClick()
+        advanceUntilIdle()
+        assertEquals(2, repository.calls)
+        assertEquals(repository.apps, viewModel.uiState.value.apps)
+        assertFalse(viewModel.uiState.value.hasError)
     }
 }
