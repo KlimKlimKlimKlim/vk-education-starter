@@ -6,4 +6,5 @@ data class AppInfo(
     val description: String,
     val category: String,
     val iconKey: String,
+    val iconUrl: String? = null,
 )

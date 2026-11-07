@@ -5,9 +5,11 @@ data class AppDetails(
     val name: String,
     val developer: String,
     val category: String,
-    val ageRating: Int,
-    val sizeMb: Float,
+    val ageRating: Int?,
+    val sizeMb: Float?,
     val iconKey: String,
     val screenshotKeys: List<String>,
     val description: String,
+    val iconUrl: String? = null,
+    val screenshotUrls: List<String> = emptyList(),
 )
