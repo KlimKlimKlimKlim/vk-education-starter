@@ -2,6 +2,12 @@ package ru.klimtrofimov.vkeducationstarter.presentation.apps
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.ui.Alignment
+import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -32,6 +38,7 @@ fun AppListScreen(
     snackbarHostState: SnackbarHostState,
     onToolbarClick: () -> Unit,
     onAppClick: (AppInfo) -> Unit,
+    onRetryClick: () -> Unit,
 ) {
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
@@ -59,14 +66,25 @@ fun AppListScreen(
             )
         },
     ) { padding ->
-        LazyColumn(
-            modifier = Modifier.fillMaxSize().padding(padding).testTag("app_list"),
-        ) {
-            items(items = uiState.apps, key = { it.id }) { app ->
-                AppListItem(
-                    app = app,
-                    onClick = { onAppClick(app) },
-                )
+        Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) {
+            when {
+                uiState.isLoading -> CircularProgressIndicator(Modifier.testTag("catalog_loading"))
+                uiState.hasError -> Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                    modifier = Modifier.padding(16.dp),
+                ) {
+                    Text(stringResource(R.string.catalog_error))
+                    Button(onClick = onRetryClick) {
+                        Text(stringResource(R.string.catalog_retry))
+                    }
+                }
+                uiState.apps.isEmpty() -> Text(stringResource(R.string.catalog_empty))
+                else -> LazyColumn(modifier = Modifier.fillMaxSize().testTag("app_list")) {
+                    items(items = uiState.apps, key = { it.id }) { app ->
+                        AppListItem(app = app, onClick = { onAppClick(app) })
+                    }
+                }
             }
         }
     }

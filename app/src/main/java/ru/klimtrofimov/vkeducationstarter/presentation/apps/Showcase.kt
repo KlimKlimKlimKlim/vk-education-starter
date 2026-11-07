@@ -23,7 +23,8 @@ fun Showcase(
     onAppClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val pages = apps.chunked(3)
+    if (apps.isEmpty()) return
+    val pages = apps.take(9).chunked(3)
     val pagerState = rememberPagerState(pageCount = { pages.size })
     Column(modifier) {
         Text(

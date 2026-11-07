@@ -1,6 +1,6 @@
 package ru.klimtrofimov.vkeducationstarter.presentation.apps
 
-import androidx.compose.foundation.Image
+import coil.compose.AsyncImage
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -40,8 +40,10 @@ fun AppListItem(
         horizontalArrangement = Arrangement.spacedBy(16.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Image(
-            painter = painterResource(appIconResource(app.iconKey)),
+        AsyncImage(
+            model = app.iconUrl ?: appIconResource(app.iconKey),
+            placeholder = painterResource(appIconResource(app.iconKey)),
+            error = painterResource(appIconResource(app.iconKey)),
             contentDescription = null,
             modifier = Modifier.size(56.dp),
         )

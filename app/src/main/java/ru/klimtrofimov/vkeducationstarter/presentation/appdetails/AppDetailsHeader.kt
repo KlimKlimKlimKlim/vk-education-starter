@@ -3,7 +3,7 @@ package ru.klimtrofimov.vkeducationstarter.presentation.appdetails
 // Основа: maltsevmicyou/VkEducation, homework-1 (ba94d740).
 // Адаптация к локальным данным и ресурсам; компоновка практики сохранена.
 
-import androidx.compose.foundation.Image
+import coil.compose.AsyncImage
 import androidx.compose.ui.res.painterResource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -40,8 +40,10 @@ fun AppDetailsHeader(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Image(
-            painter = painterResource(appIconResource(appDetails.iconKey)),
+        AsyncImage(
+            model = appDetails.iconUrl ?: appIconResource(appDetails.iconKey),
+            placeholder = painterResource(appIconResource(appDetails.iconKey)),
+            error = painterResource(appIconResource(appDetails.iconKey)),
             contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier = Modifier
@@ -61,27 +63,30 @@ fun AppDetailsHeader(
                 fontWeight = FontWeight.Bold,
                 style = MaterialTheme.typography.headlineSmall,
             )
-            Spacer(Modifier.height(4.dp))
-            Text(
-                text = appDetails.developer,
-                fontSize = 12.sp,
-            )
+            if (appDetails.developer.isNotBlank()) {
+                Spacer(Modifier.height(4.dp))
+                Text(text = appDetails.developer, fontSize = 12.sp)
+            }
             Spacer(Modifier.height(4.dp))
             Row {
-                Column(Modifier.width(IntrinsicSize.Max)) {
-                    Text(
-                        text = "${appDetails.ageRating}+",
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.fillMaxWidth(),
-                    )
-                    Spacer(Modifier.height(4.dp))
-                    Text(text = stringResource(R.string.app_details_age))
+                appDetails.ageRating?.let { age ->
+                    Column(Modifier.width(IntrinsicSize.Max)) {
+                        Text(
+                            text = "$age+",
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.fillMaxWidth(),
+                        )
+                        Spacer(Modifier.height(4.dp))
+                        Text(text = stringResource(R.string.app_details_age))
+                    }
                 }
-                Spacer(Modifier.width(12.dp))
-                Column {
-                    Text(text = "${appDetails.sizeMb.roundToInt()} MB")
-                    Spacer(Modifier.height(4.dp))
-                    Text(text = stringResource(R.string.app_details_size))
+                appDetails.sizeMb?.let { size ->
+                    Spacer(Modifier.width(12.dp))
+                    Column {
+                        Text(text = "${size.roundToInt()} MB")
+                        Spacer(Modifier.height(4.dp))
+                        Text(text = stringResource(R.string.app_details_size))
+                    }
                 }
             }
         }

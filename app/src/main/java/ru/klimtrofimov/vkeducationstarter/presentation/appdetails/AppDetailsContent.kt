@@ -50,11 +50,13 @@ fun AppDetailsContent(
                 .padding(horizontal = 16.dp)
         )
         Spacer(Modifier.height(12.dp))
-        ScreenshotsList(
-            screenshotResList = appDetails.screenshotKeys.map(::screenshotResource),
-            contentPadding = PaddingValues(horizontal = 16.dp),
-        )
-        Spacer(Modifier.height(12.dp))
+        if (appDetails.screenshotKeys.isNotEmpty()) {
+            ScreenshotsList(
+                screenshotResList = appDetails.screenshotKeys.map(::screenshotResource),
+                contentPadding = PaddingValues(horizontal = 16.dp),
+            )
+            Spacer(Modifier.height(12.dp))
+        }
         AppDescription(
             description = appDetails.description,
             collapsed = descriptionCollapsed,
@@ -69,13 +71,13 @@ fun AppDetailsContent(
             color = MaterialTheme.colorScheme.outlineVariant,
         )
         Spacer(Modifier.height(12.dp))
-        Developer(
-            name = appDetails.developer,
-            onClick = onDeveloperClick,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 16.dp),
-        )
+        if (appDetails.developer.isNotBlank()) {
+            Developer(
+                name = appDetails.developer,
+                onClick = onDeveloperClick,
+                modifier = Modifier.fillMaxWidth().padding(start = 16.dp),
+            )
+        }
         Spacer(Modifier.height(24.dp))
         HorizontalDivider(
             modifier = Modifier.padding(horizontal = 16.dp),
