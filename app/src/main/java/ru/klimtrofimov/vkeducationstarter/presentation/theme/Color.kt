@@ -1,4 +1,4 @@
-package ru.klimtrofimov.vkeducationstarter.ui.theme
+package ru.klimtrofimov.vkeducationstarter.presentation.theme
 
 import androidx.compose.ui.graphics.Color
 
