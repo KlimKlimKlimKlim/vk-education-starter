@@ -1,17 +1,26 @@
 package ru.klimtrofimov.vkeducationstarter
 
 import java.io.IOException
+import kotlinx.coroutines.delay
 import ru.klimtrofimov.vkeducationstarter.domain.model.AppDetails
 import ru.klimtrofimov.vkeducationstarter.domain.model.AppInfo
 import ru.klimtrofimov.vkeducationstarter.domain.repository.AppsRepository
 
 internal class FakeAppsRepository : AppsRepository {
     val apps = listOf(AppInfo("test", "Test", "Description", "Category", "test"))
+    var ratingCalls = 0
+    var ratingFails = false
     var calls = 0
     var detailsCalls = 0
     var remoteDetailsCalls = 0
     var fail = false
     var cached: List<AppInfo> = emptyList()
+    override suspend fun getRating(id: String): Float {
+        ratingCalls++
+        delay(1500)
+        if (ratingFails) throw IOException("Rating unavailable")
+        return 4.2f
+    }
     override suspend fun getApps(): List<AppInfo> {
         calls++
         if (fail) throw IOException("Offline")

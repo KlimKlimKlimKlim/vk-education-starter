@@ -12,6 +12,8 @@ import retrofit2.HttpException
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import ru.klimtrofimov.vkeducationstarter.data.network.AppsApi
+import ru.klimtrofimov.vkeducationstarter.data.network.RetrofitAppsApi
+import ru.klimtrofimov.vkeducationstarter.data.network.RetrofitAppsService
 
 class AppsApiTest {
     private lateinit var server: MockWebServer
@@ -20,9 +22,9 @@ class AppsApiTest {
     @Before
     fun setUp() {
         server = MockWebServer().apply { start() }
-        api = Retrofit.Builder().baseUrl(server.url("/"))
+        api = RetrofitAppsApi(Retrofit.Builder().baseUrl(server.url("/"))
             .addConverterFactory(GsonConverterFactory.create()).build()
-            .create(AppsApi::class.java)
+            .create(RetrofitAppsService::class.java))
     }
 
     @After
