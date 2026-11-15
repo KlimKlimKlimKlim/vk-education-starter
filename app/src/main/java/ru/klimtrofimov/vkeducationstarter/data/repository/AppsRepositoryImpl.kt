@@ -16,6 +16,8 @@ class AppsRepositoryImpl @Inject constructor(
     @Volatile
     private var catalog: List<AppInfo> = emptyList()
 
+    override suspend fun getRating(id: String): Float = api.getRating(id)
+
     override suspend fun getApps(): List<AppInfo> = api.getCatalog()
         .map { mapper.toAppInfo(it) }
         .also { catalog = it }

@@ -10,6 +10,8 @@ import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import ru.klimtrofimov.vkeducationstarter.data.network.AppsApi
+import ru.klimtrofimov.vkeducationstarter.data.network.RetrofitAppsApi
+import ru.klimtrofimov.vkeducationstarter.data.network.RetrofitAppsService
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -32,5 +34,6 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideAppsApi(retrofit: Retrofit): AppsApi = retrofit.create(AppsApi::class.java)
+    fun provideAppsApi(retrofit: Retrofit): AppsApi =
+        RetrofitAppsApi(retrofit.create(RetrofitAppsService::class.java))
 }
