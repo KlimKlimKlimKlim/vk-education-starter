@@ -25,19 +25,20 @@ fun AppDetailsRoute(
     onShowcaseAppClick: () -> Unit,
 ) {
     val viewModel: AppDetailsViewModel = hiltViewModel()
-    val state by viewModel.uiState.collectAsStateWithLifecycle()
-    val app = state.app
-    if (app != null) {
+    val state by viewModel.state.collectAsStateWithLifecycle()
+    val content = state as? AppDetailsState.Content
+    if (content != null) {
         AppDetailsScreen(
-            app = app,
-            showcaseApps = state.showcaseApps,
+            content = content,
+            onInstallClick = viewModel::onInstallClick,
+            onReadMoreClick = viewModel::onReadMoreClick,
             onBackClick = onBackClick,
             onShowcaseAppClick = onShowcaseAppClick,
         )
     } else {
         Scaffold { padding ->
             Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) {
-                if (state.isLoading) {
+                if (state is AppDetailsState.Loading) {
                     CircularProgressIndicator()
                 } else {
                     Column(
