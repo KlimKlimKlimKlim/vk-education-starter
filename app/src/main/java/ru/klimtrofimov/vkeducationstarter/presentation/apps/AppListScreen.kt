@@ -39,6 +39,7 @@ fun AppListScreen(
     onToolbarClick: () -> Unit,
     onAppClick: (AppInfo) -> Unit,
     onRetryClick: () -> Unit,
+    onLoadRatingsClick: (RatingsMode) -> Unit,
 ) {
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
@@ -81,8 +82,11 @@ fun AppListScreen(
                 }
                 uiState.apps.isEmpty() -> Text(stringResource(R.string.catalog_empty))
                 else -> LazyColumn(modifier = Modifier.fillMaxSize().testTag("app_list")) {
+                    item(key = "ratings_controls") {
+                        RatingsControls(uiState, onLoadRatingsClick)
+                    }
                     items(items = uiState.apps, key = { it.id }) { app ->
-                        AppListItem(app = app, onClick = { onAppClick(app) })
+                        AppListItem(app = app, rating = uiState.ratings[app.id], onClick = { onAppClick(app) })
                     }
                 }
             }

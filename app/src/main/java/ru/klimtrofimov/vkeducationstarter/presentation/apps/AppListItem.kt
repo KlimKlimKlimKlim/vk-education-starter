@@ -1,6 +1,5 @@
 package ru.klimtrofimov.vkeducationstarter.presentation.apps
 
-import coil.compose.AsyncImage
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -14,10 +13,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
+import ru.klimtrofimov.vkeducationstarter.R
 import ru.klimtrofimov.vkeducationstarter.domain.model.AppInfo
 import ru.klimtrofimov.vkeducationstarter.presentation.resources.appIconResource
 
@@ -26,6 +28,7 @@ fun AppListItem(
     app: AppInfo,
     modifier: Modifier = Modifier,
     onClick: (() -> Unit)? = null,
+    rating: Float? = null,
 ) {
     val clickModifier = if (onClick != null) {
         Modifier.clickable(role = Role.Button, onClick = onClick)
@@ -58,6 +61,13 @@ fun AppListItem(
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
+            rating?.let {
+                Text(
+                    text = stringResource(R.string.rating_value, it),
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.primary,
+                )
+            }
             Text(
                 text = app.description,
                 style = MaterialTheme.typography.bodyMedium,

@@ -41,5 +41,6 @@ fun AppListRoute(
         onToolbarClick = viewModel::onToolbarClick,
         onAppClick = onAppClick,
         onRetryClick = viewModel::onRetryClick,
+        onLoadRatingsClick = viewModel::onLoadRatingsClick,
     )
 }

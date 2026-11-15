@@ -14,4 +14,13 @@
     <string name="catalog_retry">Повторить</string>
     <string name="catalog_empty">Каталог пока пуст</string>
     <string name="app_details_error">Не удалось открыть приложение</string>
+    <string name="install_cancel">Отменить</string>
+    <string name="install_done">Установлено</string>
+    <string name="install_progress">Установка: %1$d%%</string>
+    <string name="ratings_sequential">Рейтинги: последовательно</string>
+    <string name="ratings_parallel">Рейтинги: параллельно</string>
+    <string name="ratings_loading">Загрузка рейтингов…</string>
+    <string name="ratings_error">Не удалось загрузить рейтинги. Попробуйте ещё раз.</string>
+    <string name="ratings_time">%1$s: %2$d мс, приложений: %3$d</string>
+    <string name="rating_value">★ %1$.1f</string>
 </resources>
