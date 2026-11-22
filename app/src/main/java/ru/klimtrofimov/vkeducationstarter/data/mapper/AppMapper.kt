@@ -64,4 +64,13 @@ class AppMapper @Inject constructor() {
         screenshotKeys = dto.screenshotKeys.toList(),
         description = dto.fullDescription,
     )
+
+    // Обратное преобразование Domain -> DTO.
+    fun toCatalogDto(app: AppInfo): CatalogAppDto = CatalogAppDto(
+        id = app.id,
+        name = app.name,
+        description = app.description,
+        category = app.category,
+        iconUrl = app.iconUrl.orEmpty(),
+    )
 }
